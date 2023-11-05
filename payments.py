@@ -30,6 +30,11 @@ def stripe_webhook():
     event = None
     payload = request.data
 
+    print(stripe.api_key)
+    print(STRIPE_ENDPOINT_SECRET)
+    print(TELEGRAM_BOT_API_TOKEN)
+
+
     try:
         event = json.loads(payload)
     except json.decoder.JSONDecodeError as e:
