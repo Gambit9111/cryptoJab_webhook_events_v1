@@ -36,17 +36,17 @@ def stripe_webhook():
         print('⚠️  Webhook error while parsing basic request.' + str(e))
         return jsonify(success=False)
 
-    # if STRIPE_ENDPOINT_SECRET:
-    #     # Only verify the event if there is an endpoint secret defined
-    #     # Otherwise use the basic event deserialized with json
-    #     sig_header = request.headers.get('stripe-signature')
-    #     try:
-    #         event = stripe.Webhook.construct_event(
-    #             payload, sig_header, STRIPE_ENDPOINT_SECRET
-    #         )
-    #     except stripe.error.SignatureVerificationError as e:
-    #         print('⚠️  Webhook signature verification failed.' + str(e))
-    #         return jsonify(success=False)
+    if STRIPE_ENDPOINT_SECRET:
+        # Only verify the event if there is an endpoint secret defined
+        # Otherwise use the basic event deserialized with json
+        sig_header = request.headers.get('stripe-signature')
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, STRIPE_ENDPOINT_SECRET
+            )
+        except stripe.error.SignatureVerificationError as e:
+            print('⚠️  Webhook signature verification failed.' + str(e))
+            return jsonify(success=False)
     
 
     # Handle the event
