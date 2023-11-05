@@ -15,7 +15,7 @@ load_dotenv()
 
 # Stripe
 stripe.api_key = os.getenv('STRIPE_API_KEY')
-STRIPE_ENDPOINT_SECRET = os.getenv('STRIPE_ENDPOINT_SECRET')
+STRIPE_ENDPOINT_SECRET = 'whsec_uDnh0kx3YO4nbQYkUgiQtiyLBvZxgzRG'
 
 # Telegram
 TELEGRAM_BOT_API_TOKEN = os.getenv("TELEGRAM_BOT_API_KEY")
