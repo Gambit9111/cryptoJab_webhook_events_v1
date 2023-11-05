@@ -26,32 +26,58 @@ bp = Blueprint('payments', __name__, url_prefix='/payments')
 @bp.route('/stripe/webhook', methods=['POST'])
 def stripe_webhook():
 
-    # ? Stripe stuff to get the event
     event = None
     payload = request.data
-    sig_header = request.headers('STRIPE_SIGNATURE')
+
     try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, STRIPE_ENDPOINT_SECRET
+        event = stripe.Event.construct_from(
+            payload
         )
     except ValueError as e:
         # Invalid payload
         raise e
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        raise e
     
-    # ! Handle 2 types of events, 'invoice.payment_succeeded' and 'invoice.payment_failed'
 
-    match event['type']:
-        case 'invoice.payment_succeeded':
-            invoice_payment = event['data']['object']
-            print(invoice_payment)
-
-
-
+    # Handle the event
+    if event.type == 'invoice.payment_succeeded':
+        invoice_payment = event.data.object
+        print(invoice_payment)
+    
+    elif event.type == 'invoice.payment_failed':
+        invoice_payment = event.data.object
+        print(invoice_payment)
 
     return jsonify({'message': 'Stripe Webhook'})
+
+
+
+
+    # # ? Stripe stuff to get the event
+    # event = None
+    # payload = request.data
+    # sig_header = request.headers('STRIPE_SIGNATURE')
+    # try:
+    #     event = stripe.Webhook.construct_event(
+    #         payload, sig_header, STRIPE_ENDPOINT_SECRET
+    #     )
+    # except ValueError as e:
+    #     # Invalid payload
+    #     raise e
+    # except stripe.error.SignatureVerificationError as e:
+    #     # Invalid signature
+    #     raise e
+    
+    # # ! Handle 2 types of events, 'invoice.payment_succeeded' and 'invoice.payment_failed'
+
+    # match event['type']:
+    #     case 'invoice.payment_succeeded':
+    #         invoice_payment = event['data']['object']
+    #         print(invoice_payment)
+
+
+
+
+    # return jsonify({'message': 'Stripe Webhook'})
 
 @bp.route('/coinbase/webhook', methods=['GET'])
 def coinbase_webhook():
