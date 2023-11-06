@@ -67,15 +67,17 @@ def stripe_webhook():
     # ? Handle our events --------------
     if event and event['type'] == 'invoice.payment_succeeded':
         invoice_payment = event['data']['object']
-        print("payment succeeded", invoice_payment)
+        # print("payment succeeded", invoice_payment)
 
         # ! get variables from invoice_payment
-        user_telegram_id = invoice_payment['subscription_details']['metadata']['telegram_id']
+        user_telegram_id = str(invoice_payment['subscription_details']['metadata']['telegram_id'])
         subscription_duration = int(invoice_payment['subscription_details']['metadata']['duration'])
         subscription_id = invoice_payment['subscription']
         user_email = invoice_payment['customer_email']
         # * calculate valid until date based on duration
-        subscription_valid_until_date = datetime.now() + (datetime.now() + timedelta(days=subscription_duration)).replace(microsecond=0)
+        subscription_valid_until_date = (datetime.now() + timedelta(days=subscription_duration)).replace(microsecond=0)
+
+        print("user_telegram_id", user_telegram_id, "subscription_duration", subscription_duration, "subscription_id", subscription_id, "user_email", user_email, "subscription_valid_until_date", subscription_valid_until_date)
 
         # * connect to db
         db = Database()
