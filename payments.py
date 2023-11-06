@@ -96,11 +96,13 @@ def stripe_webhook():
             if is_member == True: #? update db
                 db.execute("UPDATE users SET valid_until = %s WHERE telegram_id = %s", (subscription_valid_until_date, user_telegram_id, ))
                 print("User exists, subscription_valid_until_date updated")
+                db.close()
                 return jsonify(success=True)
             else:
                 # ? This will fire if the user is not a member of the premium channel but he is in the database
                 # !something is wrong send a message to the user saying to contact the admin
                 bot.send_message(user_telegram_id, "Stripe Error code 1. Please contact the admin.")
+                db.close()
                 return jsonify(success=False)
         
         # ! if user doesn't exist, create a new user and send him the invite link
@@ -117,11 +119,13 @@ def stripe_webhook():
                 # *send user invite link button
                 invite_link = generate_invite_link(bot, TELEGRAM_PREMIUM_CHANNEL_ID, user_telegram_id)
                 bot.send_message(user_telegram_id, "Welcome to the premium channel. Please join the channel by clicking the button below.", reply_markup=join_channel_keyboard(invite_link))
+                db.close()
                 return jsonify(success=True)
             else:
                 # ? This will fire if the user is a member of the premium channel but he is not in the database
                 # !something is wrong send a message to the user saying to contact the admin
                 bot.send_message(user_telegram_id, "Stripe Error code 2. Please contact the admin.")
+                db.close()
                 return jsonify(success=False)
 
 
